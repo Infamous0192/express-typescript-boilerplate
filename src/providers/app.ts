@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
-import dotenv from 'dotenv'
-import { getController } from './controller'
+import { Controller } from './controller'
+import { Database } from './database'
 
 class App {
   public app: express.Application
@@ -9,8 +9,8 @@ class App {
   constructor() {
     this.app = express()
 
-    dotenv.config()
     this.initializeMiddlewares()
+    this.initializeDatabase()
     this.initializeControllers()
   }
 
@@ -30,9 +30,13 @@ class App {
   }
 
   private initializeControllers() {
-    getController().then((controllers: any[]) => {
+    Controller.getController().then((controllers: any[]) => {
       controllers.forEach((controller) => new controller())
     })
+  }
+
+  private initializeDatabase() {
+    Database.init()
   }
 }
 
