@@ -42,6 +42,6 @@ export function request(path: string, method: METHOD): MethodDecorator {
 
 export const Get = (path: string = '/') => request(path, METHOD.GET)
 export const Post = (path: string = '/') => request(path, METHOD.POST)
-export const Put = (path: string = '/') => request(path, METHOD.PUT)
-export const Delete = (path: string = '/') => request(path, METHOD.DELETE)
-export const Patch = (path: string = '/') => request(path, METHOD.PATCH)
+export const Put = (path: string = '/:id') => request(path, METHOD.PUT)
+export const Delete = (path: string = '/:id') => request(path, METHOD.DELETE)
+export const Patch = (path: string = '/:id') => request(path, METHOD.PATCH)
