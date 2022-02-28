@@ -1,3 +1,9 @@
+/**
+ * This file contains user's role and its privilege level,
+ * the higher the number the higher the privilege is,
+ * user with higher level can access privilege from the lower level
+ */
+
 export enum Role {
   SUPERADMIN = 'superadmin',
   MANAGER = 'manager',

@@ -1,6 +1,5 @@
 import { Controller, Delete, Get, HttpException, Patch, Post, Validation } from 'common'
-import { NextFunction, Request, Response } from 'express'
-import { User } from 'interfaces'
+import { Request, Response, User } from 'interfaces'
 import userModel from 'models/user'
 import AuthService from 'services/auth'
 import UserDto from 'validations/user'

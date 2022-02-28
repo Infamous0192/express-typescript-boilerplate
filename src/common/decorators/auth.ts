@@ -3,6 +3,10 @@ import { privilageLevel } from 'constants/role'
 import { Request, Response } from 'express'
 import AuthService from 'services/auth'
 
+/**
+ * Secure API Routes using JWT, use this decorator in the Controller Class only.
+ * @param privilege Role privilege level, user with higher level can access privilege from the lower level
+ */
 export function Auth(privilege: number): MethodDecorator {
   return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const original = descriptor.value

@@ -2,6 +2,13 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate, ValidationError } from 'class-validator'
 
+/**
+ * Validate user request before executing the function,
+ * use this decorator only in the controller class
+ *
+ * @param type Validation DTO class
+ * @param skipMissingProperties Skip missing validation properties, the default value is false, use true on 'PATCH' request,
+ */
 export function Validation(type: any, skipMissingProperties = false): MethodDecorator {
   return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const original = descriptor.value

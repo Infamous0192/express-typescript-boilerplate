@@ -2,6 +2,10 @@ import glob from 'glob'
 import path from 'path'
 
 export class Controller {
+  /**
+   * Get all controller class in the controller directory
+   * @returns Controller classes
+   */
   static getController(): Promise<any> {
     const dirname = path.dirname(__dirname)
 

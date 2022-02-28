@@ -1,3 +1,8 @@
+/**
+ * Define a controller, use this decorator on a class,
+ * TODO make validation for path
+ * @param path API base path
+ */
 export function Controller(path: string = '/'): ClassDecorator {
   return (target) => {
     Reflect.defineMetadata('path', path, target.prototype)

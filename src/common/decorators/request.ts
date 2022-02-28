@@ -17,6 +17,12 @@ const STATUS_CODE = {
   patch: 200,
 }
 
+/**
+ * Make a http request in the controller, this function is only a wrapper, use basic decorator request instead.
+ * TODO create validation for the path
+ * @param path Request path
+ * @param method Request method
+ */
 export function request(path: string, method: METHOD): MethodDecorator {
   return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const response = async (req: Request, res: Response) => {
@@ -40,8 +46,32 @@ export function request(path: string, method: METHOD): MethodDecorator {
   }
 }
 
+/**
+ * Create GET Request, use this in the controller class
+ * @param path Request path, the path will use controller's path as base path
+ */
 export const Get = (path: string = '/') => request(path, METHOD.GET)
+
+/**
+ * Create POST Request, use this in the controller class
+ * @param path Request path, the path will use controller's path as base path
+ */
 export const Post = (path: string = '/') => request(path, METHOD.POST)
+
+/**
+ * Create PUT Request, use this in the controller class
+ * @param path Request path, the path will use controller's path as base path
+ */
 export const Put = (path: string = '/:id') => request(path, METHOD.PUT)
+
+/**
+ * Create DElETE Request, use this in the controller class
+ * @param path Request path, the path will use controller's path as base path
+ */
 export const Delete = (path: string = '/:id') => request(path, METHOD.DELETE)
+
+/**
+ * Create PATCH Request, use this in the controller class
+ * @param path Request path, the path will use controller's path as base path
+ */
 export const Patch = (path: string = '/:id') => request(path, METHOD.PATCH)

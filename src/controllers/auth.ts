@@ -1,6 +1,5 @@
-import { Request, Response } from 'express'
 import { Auth, Controller, Get, Post, Validation } from 'common'
-import { User } from 'interfaces'
+import { Request, Response, User } from 'interfaces'
 import LoginDto from 'validations/login'
 import AuthService from 'services/auth'
 import { Role } from 'constants/role'
