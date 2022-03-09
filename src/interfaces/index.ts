@@ -1,5 +1,6 @@
-export * from './channel'
 export * from './user'
 export * from './creds'
 export * from './request'
 export * from './response'
+export * from './file'
+export * from './model'

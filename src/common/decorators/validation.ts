@@ -25,9 +25,13 @@ export function Validation(type: any, skipMissingProperties = false): MethodDeco
 
       if (!errors.length) return original.apply(this, args)
 
-      const message = errors.map((error) => Object.values(error.constraints)).join(', ')
+      let data: any = {}
 
-      res.status(400).send({ message })
+      errors.forEach((error) => {
+        data[error.property] = Object.values(error.constraints)[0]
+      })
+
+      res.status(400).send({ message: 'Invalid payload', data })
     }
   }
 }

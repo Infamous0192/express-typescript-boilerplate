@@ -31,7 +31,7 @@ class UserController {
 
     const user = await AuthService.register(data)
 
-    return user
+    return { message: 'User created successfully' }
   }
 
   @Validation(UserDto, true)
@@ -46,7 +46,6 @@ class UserController {
     return { message: 'User updated successfully' }
   }
 
-  @Validation(UserDto, true)
   @Delete()
   async delete(req: Request, res: Response) {}
 }

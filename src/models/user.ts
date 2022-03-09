@@ -21,6 +21,6 @@ const userSchema = new Schema(
   { timestamps: true }
 )
 
-const userModel = mongoose.model<User & Document>('Channel', userSchema)
+const userModel = mongoose.model<User & Document>('User', userSchema)
 
 export default userModel

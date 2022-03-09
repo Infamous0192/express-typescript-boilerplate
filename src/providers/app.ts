@@ -1,7 +1,8 @@
 import express from 'express'
 import cors from 'cors'
-import { Controller } from './controller'
 import { Database } from './database'
+import fileUpload from 'express-fileupload'
+import path from 'path'
 
 class App {
   public app: express.Application
@@ -27,12 +28,14 @@ class App {
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }))
     this.app.use(express.static('public'))
+    this.app.use(fileUpload({ createParentPath: true }))
   }
 
   private initializeControllers() {
-    Controller.getController().then((controllers: any[]) => {
-      controllers.forEach((controller) => new controller())
+    this.app.all(/^\/(?!api($|\/.*))/, (req, res) => {
+      res.sendFile(path.join(__dirname, '../../public', 'index.html'))
     })
+    import('controllers')
   }
 
   private initializeDatabase() {

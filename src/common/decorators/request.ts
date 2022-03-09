@@ -29,6 +29,8 @@ export function request(path: string, method: METHOD): MethodDecorator {
       try {
         const original = await descriptor.value(req, res)
 
+        if (!original) return
+
         res.status(STATUS_CODE[method]).json(original)
       } catch (error) {
         const status = error.status || 500
