@@ -1,8 +1,0 @@
-PORT = 3009
-
-MONGO_DB = videotron-v2
-MONGO_HOST = cluster0.tzehi.mongodb.net
-MONGO_USER = admin
-MONGO_PASS = Qo2XQV2il3KCYZQW
-
-JWT_SECRET = asdqwe123

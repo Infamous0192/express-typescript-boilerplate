@@ -7,7 +7,7 @@
 /dist
 
 # local env files
-# .env
+.env
 
 #uploaded files
 /public/files
