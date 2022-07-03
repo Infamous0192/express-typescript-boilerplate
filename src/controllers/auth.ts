@@ -1,35 +1,44 @@
-import { Auth, Controller, Get, Post, Validation } from 'common'
-import { Request, Response, User } from 'interfaces'
-import LoginDto from 'validations/login'
-import AuthService from 'services/auth'
+import { Controller, Post, Body, Request, Get } from 'common/decorators'
+
+import { auth, validation } from 'middlewares'
+
+import { Creds, User } from 'interfaces'
 import { Role } from 'constants/role'
+
+import AuthService from 'services/auth'
+import LoginDto from 'validations/login'
 import RegisterDto from 'validations/register'
 
 @Controller('/api/auth')
 class AuthController {
-  @Validation(RegisterDto)
-  @Post('/register')
-  async register(req: Request, res: Response) {
-    const data: User = req.body
-
+  @Post('/register', validation(RegisterDto))
+  async register(@Body() data: User) {
     await AuthService.register({
       ...data,
-      username: data.username.toLowerCase(),
       role: Role.CUSTOMER,
     })
 
     return { message: 'User create successfully' }
   }
 
-  @Validation(LoginDto)
-  @Post('/login')
-  async login(req: Request, res: Response) {
-    const data: LoginDto = req.body
+  @Post('/login', validation(LoginDto))
+  async login(@Body() data: LoginDto) {
+    const { _id, username, name, role } = await AuthService.login(data)
+    const token = AuthService.createToken(_id)
 
-    const user = await AuthService.login({ ...data, username: data.username.toLowerCase() })
-    const token = AuthService.createToken(user)
+    return { data: { token, creds: { _id, username, name, role } } }
+  }
 
-    return { token }
+  @Get('/verify', auth())
+  async verify(@Request('creds') creds: Creds) {
+    return { data: { creds } }
+  }
+
+  @Get('/refresh', auth())
+  async refreshToken(@Request('creds') creds: Creds) {
+    const token = AuthService.createToken(creds._id)
+
+    return { data: { token } }
   }
 }
 

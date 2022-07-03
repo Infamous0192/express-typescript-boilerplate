@@ -1,4 +1,4 @@
-import { HttpException } from 'common'
+import { HttpException } from 'common/exceptions'
 import { privilageLevel } from 'constants/role'
 import { Request, Response } from 'interfaces'
 import AuthService from 'services/auth'
@@ -30,7 +30,7 @@ export function Auth(privilege: number = 0): MethodDecorator {
       } catch (error) {
         const status = error.status || 500
         const message = error.message || 'Something went wrong'
-        res.status(status).send({ message })
+        res.status(status).send({ status: 'error', data: null, message })
       }
     }
   }

@@ -1,50 +1,55 @@
-import { Controller, Delete, Get, HttpException, NotFoundException, Patch, Post } from 'common'
 import { UploadedFile } from 'express-fileupload'
-import { Request, Response } from 'interfaces'
-import fileModel from 'models/file'
+import { Controller, Delete, Get, Patch, Post, Params, Request, Query } from 'common/decorators'
+import { HttpException, NotFoundException } from 'common/exceptions'
+
+import { auth } from 'middlewares'
 import FileService from 'services/file'
+
+import { QueryOption } from 'interfaces'
 
 @Controller('/api/file')
 class FileController {
-  @Get()
-  async index(req: Request, res: Response) {
-    const file = await fileModel.find()
+  @Get('/', auth(3))
+  async index(@Query() query: QueryOption) {
+    const data = await FileService.paginate(query)
 
-    return file
+    return { data }
   }
 
-  @Get('/:id')
-  async get(req: Request, res: Response) {
-    const { id } = req.params
-    const file = await fileModel.findById(id)
+  @Get('/summary', auth(1))
+  async getSummary() {
+    const data = await FileService.summary()
 
-    if (!file) throw new NotFoundException('File', id)
-
-    return file
+    return { data }
   }
 
-  @Post()
-  async create(req: Request, res: Response) {
-    if (req.files == null || !req.files.file) throw new HttpException(400, 'File should not be empty')
-    
-    const file = req.files.file as UploadedFile
+  @Get('/:id', auth(1))
+  async get(@Params('id') id: string) {
+    const file = await FileService.findOne(id)
 
-    const data = await FileService.upload(file)
+    return { data: { file } }
+  }
+
+  @Post('/', auth(2))
+  async create(@Request('files') files: { [key: string]: UploadedFile }) {
+    if (!files) throw new HttpException(400, 'File should not be empty')
+
+    const data = await FileService.upload(files.file)
 
     return { message: 'File uploaded successfully', data }
   }
 
-  /**
-   * TODO update file's metadata
-   */
   @Patch('/:id')
-  async update(req: Request, res: Response) {}
+  async update() {
+    return {}
+  }
 
-  /**
-   * TODO delete file
-   */
   @Delete('/:id')
-  async delete(req: Request, res: Response) {}
+  async delete(@Params('id') id: string) {
+    const file = await FileService.delete(id)
+
+    return { message: 'File deleted successfully' }
+  }
 }
 
 export default FileController

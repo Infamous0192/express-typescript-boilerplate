@@ -10,4 +10,4 @@
 .env
 
 #uploaded files
-/public/files
+# /public/files

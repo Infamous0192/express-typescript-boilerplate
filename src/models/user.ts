@@ -1,5 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose'
-import { User, UserStatus } from 'interfaces'
+import { Schema, model } from 'mongoose'
+import { User } from 'interfaces'
 import { Role } from 'constants/role'
 
 const userSchema = new Schema(
@@ -12,15 +12,10 @@ const userSchema = new Schema(
       enum: Role,
       default: Role.CUSTOMER,
     },
-    status: {
-      type: String,
-      enum: UserStatus,
-      default: UserStatus.INACTIVE,
-    },
   },
   { timestamps: true }
 )
 
-const userModel = mongoose.model<User & Document>('User', userSchema)
+const userModel = model<User & Document>('User', userSchema)
 
 export default userModel

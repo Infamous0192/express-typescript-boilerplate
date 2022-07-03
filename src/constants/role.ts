@@ -8,6 +8,7 @@ export enum Role {
   SUPERADMIN = 'superadmin',
   MANAGER = 'manager',
   PUBLISHER = 'publisher',
+  BROADCASTER = 'broadcaster',
   CUSTOMER = 'customer',
 }
 
@@ -16,4 +17,5 @@ export const privilageLevel: { [key: string]: number } = {
   manager: 3,
   publisher: 2,
   customer: 1,
+  broadcaster: 1,
 }

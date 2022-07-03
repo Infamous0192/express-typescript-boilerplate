@@ -6,9 +6,9 @@
     "rootDir": "src",
     "baseUrl": "src",
     "outDir": "./dist",
-    "esModuleInterop": true,
     "alwaysStrict": true,
     "noImplicitAny": true,
+    "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },

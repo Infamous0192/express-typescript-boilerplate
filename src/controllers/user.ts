@@ -1,53 +1,61 @@
-import { Controller, Delete, Get, HttpException, Patch, Post, Validation } from 'common'
-import { Request, Response, User } from 'interfaces'
-import userModel from 'models/user'
+import { Controller, Body, Params, Query, Request } from 'common/decorators'
+import { Delete, Get, Patch, Post } from 'common/decorators'
+import { HttpException } from 'common/exceptions'
+
+import { auth, validation } from 'middlewares'
+import { Creds, QueryOption, User } from 'interfaces'
+
 import AuthService from 'services/auth'
 import UserDto from 'validations/user'
+import UserService from 'services/user'
+import { privilageLevel } from 'constants/role'
 
 @Controller('/api/user')
 class UserController {
-  @Get()
-  async get(req: Request, res: Response) {
-    const user = await userModel.find().select('-password')
+  @Get('/', auth(2))
+  async index(@Query() query: QueryOption) {
+    const data = await UserService.findAll(query)
 
-    return user
+    return { data }
   }
 
-  @Get('/:id')
-  async getByUsername(req: Request, res: Response) {
-    const username = req.params.id
+  @Get('/:username', auth(2))
+  async get(@Params('username') username: string) {
+    const user = await UserService.findOne(username)
 
-    const user = await userModel.findOne({ username })
-
-    if (!user) throw new HttpException(404, 'User not found')
-
-    return user
+    return { data: { user } }
   }
 
-  @Validation(UserDto)
-  @Post()
-  async create(req: Request, res: Response) {
-    const data: UserDto = req.body
+  @Post('/', auth(2), validation(UserDto))
+  async create(@Body() data: UserDto, @Request('creds') creds: Creds) {
+    if (privilageLevel[data.role] > privilageLevel[creds.role])
+      throw new HttpException(403, 'Access denied')
 
-    const user = await AuthService.register(data)
+    await AuthService.register(data)
 
-    return { message: 'User created successfully' }
+    return { message: 'User created successfully', status: 201 }
   }
 
-  @Validation(UserDto, true)
-  @Patch()
-  async update(req: Request, res: Response) {
-    const username = req.params.id
+  @Patch('/:username', auth(2), validation(UserDto, true))
+  async update(
+    @Params('username') username: string,
+    @Body() data: User,
+    @Request('creds') creds: Creds
+  ) {
+    if (privilageLevel[data.role] > privilageLevel[creds.role])
+      throw new HttpException(403, 'Access denied')
 
-    const user = await userModel.findByIdAndUpdate({ username }, req.body)
-
-    if (!user) throw new HttpException(404, 'User not found')
+    await UserService.update(username, data)
 
     return { message: 'User updated successfully' }
   }
 
-  @Delete()
-  async delete(req: Request, res: Response) {}
+  @Delete('/:username', auth(3))
+  async delete(@Params('username') username: string) {
+    await UserService.delete(username)
+
+    return { message: 'User deleted successfully' }
+  }
 }
 
 export default UserController

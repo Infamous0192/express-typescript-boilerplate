@@ -1,8 +1,12 @@
 import express from 'express'
 import cors from 'cors'
-import { Database } from './database'
-import fileUpload from 'express-fileupload'
 import path from 'path'
+import fileUpload from 'express-fileupload'
+
+import { Database } from './database'
+import socketIoHandler from './socket'
+import { Controller } from './controller'
+import errorMiddleware from 'middlewares/error'
 
 class App {
   public app: express.Application
@@ -13,10 +17,16 @@ class App {
     this.initializeMiddlewares()
     this.initializeDatabase()
     this.initializeControllers()
+    this.initializeErrorHandling()
   }
 
   public listen() {
-    const server = require('http').Server(this.app)
+    let server = require('http').Server(this.app)
+    let io = require('socket.io')(server, {
+      cors: { origin: '*' },
+    })
+
+    socketIoHandler(io)
 
     server.listen(process.env.PORT, () => {
       console.log(`[server]: Server is running at http://localhost:${process.env.PORT}`)
@@ -24,7 +34,7 @@ class App {
   }
 
   private initializeMiddlewares() {
-    this.app.use(cors())
+    this.app.use(cors({ origin: '*' }))
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }))
     this.app.use(express.static('public'))
@@ -32,10 +42,14 @@ class App {
   }
 
   private initializeControllers() {
-    this.app.all(/^\/(?!api($|\/.*))/, (req, res) => {
+    Controller.init(this.app)
+    this.app.all('*', (req, res) => {
       res.sendFile(path.join(__dirname, '../../public', 'index.html'))
     })
-    import('controllers')
+  }
+
+  private initializeErrorHandling() {
+    this.app.use(errorMiddleware)
   }
 
   private initializeDatabase() {

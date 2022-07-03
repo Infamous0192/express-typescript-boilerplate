@@ -1,0 +1,31 @@
+image : node:15.14.0-buster-slim
+
+default:
+  before_script:
+    - apt-get update
+    - apt-get install -y sshpass zip
+
+stages:
+  - build-backendApi
+
+#debug-ci-cd:
+#  tags:
+#  - docker
+#  stage: debug-ci-cd
+#  script:
+#    - sshpass -p "$DEPLOY_SERVER_PASSWORD" -v ssh -oStrictHostKeyChecking=no "$DEPLOY_SERVER_USER@$DEPLOY_SERVER_URL" 'cd /opt/node_project/; cd #videotron_client; pm2 start yarn --name videotron_client -- start;'
+    
+
+build-backendApi:
+  tags:
+  - docker
+  stage: build-backendApi
+  script:
+#    - yarn install
+#    - yarn build
+    - mkdir ~/.ssh
+    - ssh-keyscan -H $DEPLOY_SERVER_URL >> ~/.ssh/known_hosts
+    - cd ..
+    - zip -r videotron_server.zip videotron_server
+    - sshpass -p "$DEPLOY_SERVER_PASSWORD" -v scp -r videotron_server.zip $DEPLOY_SERVER_USER@$DEPLOY_SERVER_URL:/opt/node_project/
+    - sshpass -p "$DEPLOY_SERVER_PASSWORD" -v ssh -t -oStrictHostKeyChecking=no "$DEPLOY_SERVER_USER@$DEPLOY_SERVER_URL" 'pm2 delete videotron_server_3009; cd /opt/node_project/; rm -rf videotron_server; unzip -o videotron_server.zip; cd videotron_server; mv env .env; yarn install; yarn build; pm2 start yarn --name videotron_server_3009 -- start;'

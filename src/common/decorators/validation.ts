@@ -31,7 +31,7 @@ export function Validation(type: any, skipMissingProperties = false): MethodDeco
         data[error.property] = Object.values(error.constraints)[0]
       })
 
-      res.status(400).send({ message: 'Invalid payload', data })
+      res.status(400).send({ status: 'error', data, message: 'Invalid payload' })
     }
   }
 }

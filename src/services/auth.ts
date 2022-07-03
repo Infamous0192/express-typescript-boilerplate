@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
-import { HttpException } from 'common'
+import { HttpException } from 'common/exceptions'
 import { JWT_EXPIRES_IN, JWT_SECRET } from 'config'
 import { User, Creds } from 'interfaces'
 
@@ -36,9 +36,9 @@ class AuthService {
     return user
   }
 
-  public static createToken(user: User) {
+  public static createToken(userid: string) {
     const options: jwt.SignOptions = { expiresIn: JWT_EXPIRES_IN }
-    const token = jwt.sign({ userid: user._id }, JWT_SECRET, options)
+    const token = jwt.sign({ userid }, JWT_SECRET, options)
 
     return token
   }
